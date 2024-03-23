@@ -14,6 +14,7 @@ public class WordGraphAnalysis {
     // and the edges are the number of times the words appear together in the text.
     // The graph is represented as an adjacency list.
 
+    private static final int MAX_N = 10;
     private static final String WORD_REGEX = "[a-z0-9_-]+";
     private int n;
     private Map<String, Integer> wordFrequencies;
@@ -41,10 +42,17 @@ public class WordGraphAnalysis {
      */
     private void analyzeFrequencies(String text) {
         wordFrequencies = new HashMap<>();
+        var allWordFrequencies = new HashMap<String, Integer>();
         Matcher matcher = Pattern.compile(WORD_REGEX).matcher(text);
         while (matcher.find()) {
             String word = matcher.group();
-            wordFrequencies.put(word, wordFrequencies.getOrDefault(word, 0) + 1);
+            allWordFrequencies.put(word, allWordFrequencies.getOrDefault(word, 0) + 1);
+        }
+        // Filter out words that are not in the top MAX_N words
+        List<String> words = new ArrayList<>(allWordFrequencies.keySet());
+        words.sort((a, b) -> allWordFrequencies.get(b) - allWordFrequencies.get(a));
+        for (int i = 0; i < Math.min(MAX_N, words.size()); i++) {
+            wordFrequencies.put(words.get(i), allWordFrequencies.get(words.get(i)));
         }
     }
 
