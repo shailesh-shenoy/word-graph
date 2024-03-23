@@ -54,10 +54,11 @@ public class WordGraphService {
                     .createdAt(wordGraph.getCreatedAt())
                     .build();
         }
+        WordGraphAnalysis wga = new WordGraphAnalysis(trimmedText);
         wordGraph = WordGraph.builder()
                 .hash(hash)
                 .text(trimmedText)
-                .graph(WordGraphAnalysis.buildGraph(trimmedText))
+                .graph("GRAPH DEEZ")
                 .createdAt(LocalDateTime.now())
                 .build();
         wordGraph = mongoTemplate.save(wordGraph);
