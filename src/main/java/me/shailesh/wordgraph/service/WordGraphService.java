@@ -50,7 +50,8 @@ public class WordGraphService {
                     .id(wordGraph.getId())
                     .hash(wordGraph.getHash())
                     .text(wordGraph.getText())
-                    .graph(wordGraph.getGraph())
+                    .adjacencyList(wordGraph.getAdjacencyList())
+                    .wordFrequencies(wordGraph.getWordFrequencies())
                     .createdAt(wordGraph.getCreatedAt())
                     .build();
         }
@@ -58,7 +59,8 @@ public class WordGraphService {
         wordGraph = WordGraph.builder()
                 .hash(hash)
                 .text(trimmedText)
-                .graph("GRAPH DEEZ")
+                .adjacencyList(wga.getAdjacencyList())
+                .wordFrequencies(wga.getWordFrequencies())
                 .createdAt(LocalDateTime.now())
                 .build();
         wordGraph = mongoTemplate.save(wordGraph);
@@ -66,7 +68,8 @@ public class WordGraphService {
                 .id(wordGraph.getId())
                 .hash(wordGraph.getHash())
                 .text(wordGraph.getText())
-                .graph(wordGraph.getGraph())
+                .adjacencyList(wordGraph.getAdjacencyList())
+                .wordFrequencies(wordGraph.getWordFrequencies())
                 .createdAt(wordGraph.getCreatedAt())
                 .build();
     }
@@ -96,7 +99,8 @@ public class WordGraphService {
                 .id(wordGraph.getId())
                 .hash(wordGraph.getHash())
                 .text(wordGraph.getText())
-                .graph(wordGraph.getGraph())
+                .adjacencyList(wordGraph.getAdjacencyList())
+                .wordFrequencies(wordGraph.getWordFrequencies())
                 .createdAt(wordGraph.getCreatedAt())
                 .build();
     }

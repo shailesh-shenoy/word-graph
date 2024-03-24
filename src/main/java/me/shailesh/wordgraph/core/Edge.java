@@ -1,6 +1,9 @@
 package me.shailesh.wordgraph.core;
 
-class Edge {
+import lombok.Data;
+
+@Data
+public class Edge {
     protected String to;
     protected double weight;
     public Edge(String to, double weight) {

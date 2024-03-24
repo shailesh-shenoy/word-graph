@@ -2,10 +2,13 @@ package me.shailesh.wordgraph.core;
 
 
 
+import lombok.Data;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Data
 public class WordGraphAnalysis {
     // In this graph, the vertices are the words
     // and the edges are the number of times the words appear together in the text.
@@ -93,7 +96,6 @@ public class WordGraphAnalysis {
      * Update the edge in the adjacency list from word1 to word2.
      * If the edge does not exist, create it.
      * If the edge exists, increment the weight.
-     *
      * @param word1 the first word
      * @param word2 the second word
      */
