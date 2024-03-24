@@ -2,10 +2,7 @@ package me.shailesh.wordgraph.core;
 
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,9 +13,9 @@ public class WordGraphAnalysis {
 
     private static final int MAX_N = 10;
     private static final String WORD_REGEX = "[a-z0-9_-]+";
-    private int n;
+    private int v;
+    private int e;
     private Map<String, Integer> wordFrequencies;
-
     private Map<String, List<Edge>> adjacencyList;
 
     public WordGraphAnalysis() {
@@ -26,12 +23,13 @@ public class WordGraphAnalysis {
 
     }
     public WordGraphAnalysis(String text) {
-
+        e = 0;
         analyzeFrequencies(text);
-        this.n = wordFrequencies.size();
+        v = adjacencyList.size();
         buildAdjacencyList(text);
-        System.out.println("n = " + n);
+        System.out.println("v = " + v + ", e = " + e);
         System.out.println("wordFrequencies = " + wordFrequencies);
+        System.out.println("adjacencyList = " + adjacencyList);
     }
 
 
@@ -41,8 +39,9 @@ public class WordGraphAnalysis {
      * @param text the text to create the graph from
      */
     private void analyzeFrequencies(String text) {
-        wordFrequencies = new HashMap<>();
+        adjacencyList = new HashMap<>();
         var allWordFrequencies = new HashMap<String, Integer>();
+        wordFrequencies = new HashMap<>();
         Matcher matcher = Pattern.compile(WORD_REGEX).matcher(text);
         while (matcher.find()) {
             String word = matcher.group();
@@ -53,10 +52,83 @@ public class WordGraphAnalysis {
         words.sort((a, b) -> allWordFrequencies.get(b) - allWordFrequencies.get(a));
         for (int i = 0; i < Math.min(MAX_N, words.size()); i++) {
             wordFrequencies.put(words.get(i), allWordFrequencies.get(words.get(i)));
+            adjacencyList.put(words.get(i), new ArrayList<>());
         }
     }
 
+
+
     private void buildAdjacencyList(String text) {
-        adjacencyList = new HashMap<>();
+        int count = 0;
+        // Split the text into sentences
+        String[] sentences = text.split("[.!?]");
+        Pattern wordPattern = Pattern.compile(WORD_REGEX);
+        Matcher matcher;
+        // Store pairs of words in the graph in a set
+        Set<Set<String>> wordPairs = getWordPairs();
+        System.out.println("wordPairs = " + wordPairs);
+        // For each pair of words, check if they appear in the same sentence
+        // If they do, increment the edge weight
+        for (Set<String> wordPair : wordPairs) {
+            for (String sentence : sentences) {
+                matcher = wordPattern.matcher(sentence);
+                // Create a set of words in the sentence
+                Set<String> wordsInSentence = new HashSet<>();
+                while (matcher.find()) {
+                    wordsInSentence.add(matcher.group());
+                }
+                String[] wordsInPair = wordPair.toArray(new String[0]);
+                String word1 = wordsInPair[0];
+                String word2 = wordsInPair[1];
+                if (wordsInSentence.contains(word1) && wordsInSentence.contains(word2)) {
+                    // Add or update edges between the two words
+                    updateEdge(word1, word2);
+                    updateEdge(word2, word1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the edge in the adjacency list from word1 to word2.
+     * If the edge does not exist, create it.
+     * If the edge exists, increment the weight.
+     *
+     * @param word1 the first word
+     * @param word2 the second word
+     */
+    private void updateEdge(String word1, String word2) {
+        List<Edge> edges = adjacencyList.get(word1);
+        if(edges == null) {
+            edges = new ArrayList<>();
+        }
+        boolean found = false;
+        for(Edge edge : edges) {
+            if(edge.to.equals(word2)) {
+                edge.weight++;
+                found = true;
+                break;
+            }
+        }
+        if(!found) {
+            edges.add(new Edge(word2, 1));
+            e++;
+        }
+    }
+
+    private Set<Set<String>> getWordPairs() {
+        Set<Set<String>> wordPairs = new HashSet<>();
+        for(String word : adjacencyList.keySet()) {
+            for(String otherWord : adjacencyList.keySet()) {
+                if(word.equals(otherWord)) {
+                    continue;
+                }
+                var wordPair = new HashSet<String>();
+                wordPair.add(word);
+                wordPair.add(otherWord);
+                wordPairs.add(wordPair);
+            }
+        }
+        return wordPairs;
     }
 }
