@@ -59,7 +59,29 @@ public class WordGraphAnalysis {
         }
     }
 
+    public Path bfs(String start) {
+        if(!adjacencyList.containsKey(start)) {
+            return null;
+        }
+        Set<String> visited = new HashSet<>();
+        Queue<String> queue = new LinkedList<>();
+        int pathLength = 0;
+        List<String> bfsOrder = new LinkedList<>();
 
+        visited.add(start);
+        queue.add(start);
+        while(!queue.isEmpty()) {
+            var current = queue.poll();
+            bfsOrder.add(current);
+            for(Edge e : adjacencyList.get(current)) {
+                if(!visited.contains(e.to)) {
+                    visited.add(e.to);
+                    queue.add(e.to);
+                }
+            }
+        }
+        return Path.builder().length(pathLength).path(bfsOrder).build();
+    }
 
     private void buildAdjacencyList(String text) {
         int count = 0;

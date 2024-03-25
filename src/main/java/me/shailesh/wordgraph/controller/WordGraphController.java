@@ -6,6 +6,7 @@ import me.shailesh.wordgraph.model.WordGraphCreateDto;
 import me.shailesh.wordgraph.model.WordGraphDetailDto;
 import me.shailesh.wordgraph.model.WordGraphDto;
 import me.shailesh.wordgraph.service.WordGraphService;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,15 @@ public class WordGraphController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WordGraphDetailDto> fetchWordGraph(@PathVariable String id) {
+        var wordGraphDetail = wordGraphService.getWordGraphById(id);
+        if(wordGraphDetail == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(wordGraphDetail);
+    }
+
+    @GetMapping("/{id}/bfs")
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphBFS(@PathVariable String id, @RequestParam String start) {
         var wordGraphDetail = wordGraphService.getWordGraphById(id);
         if(wordGraphDetail == null) {
             return ResponseEntity.notFound().build();
