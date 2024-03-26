@@ -38,12 +38,13 @@ public class WordGraphController {
         return ResponseEntity.ok(wordGraphDetail);
     }
 
-    @GetMapping("/{id}/bfs")
-    public ResponseEntity<WordGraphDetailDto> fetchWordGraphBFS(@PathVariable String id, @RequestParam String start) {
+    @GetMapping("/{id}/traversal")
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphTraversal(@PathVariable String id, @RequestParam String start, @RequestParam(required = false) String type) {
         var wordGraphDetail = wordGraphService.getWordGraphById(id);
         if(wordGraphDetail == null) {
             return ResponseEntity.notFound().build();
         }
+        wordGraphDetail = wordGraphService.traversal(wordGraphDetail, start, type);
         return ResponseEntity.ok(wordGraphDetail);
     }
 }

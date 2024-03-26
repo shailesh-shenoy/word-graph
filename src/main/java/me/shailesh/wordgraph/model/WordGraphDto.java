@@ -15,6 +15,7 @@ public class WordGraphDto {
     private String id;
     private String hash;
     private String text;
+    private int wordCount;
     private int edgeCount;
     private LocalDateTime createdAt;
 }

@@ -2,13 +2,19 @@ package me.shailesh.wordgraph.core;
 
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WordGraphAnalysis {
     // In this graph, the vertices are the words
     // and the edges are the number of times the words appear together in the text.
@@ -21,10 +27,6 @@ public class WordGraphAnalysis {
     private Map<String, Integer> wordFrequencies;
     private Map<String, List<Edge>> adjacencyList;
 
-    public WordGraphAnalysis() {
-
-
-    }
     public WordGraphAnalysis(String text) {
         e = 0;
         analyzeFrequencies(text);
@@ -34,7 +36,6 @@ public class WordGraphAnalysis {
         System.out.println("wordFrequencies = " + wordFrequencies);
         System.out.println("adjacencyList = " + adjacencyList);
     }
-
 
     /**
      * Analyze the text and find the frequencies of each word. The text is assumed to be lowercase.
@@ -65,7 +66,7 @@ public class WordGraphAnalysis {
         }
         Set<String> visited = new HashSet<>();
         Queue<String> queue = new LinkedList<>();
-        int pathLength = 0;
+        double pathWeight = 0.0;
         List<String> bfsOrder = new LinkedList<>();
 
         visited.add(start);
@@ -77,10 +78,37 @@ public class WordGraphAnalysis {
                 if(!visited.contains(e.to)) {
                     visited.add(e.to);
                     queue.add(e.to);
+                    pathWeight+= e.weight;
                 }
             }
         }
-        return Path.builder().length(pathLength).path(bfsOrder).build();
+        return Path.builder().weight(pathWeight).path(bfsOrder).build();
+    }
+
+    public Path dfs(String start) {
+        if(!adjacencyList.containsKey(start)) {
+            return null;
+        }
+        Stack<Edge> stack = new Stack<>();
+        Set<String> visited = new HashSet<>();
+        double pathWeight = 0.0;
+        List<String> dfsOrder = new LinkedList<>();
+
+        stack.push(new Edge(start, 0.0));
+        while(!stack.isEmpty()) {
+            var current = stack.pop();
+            if(!visited.contains(current.to)) {
+                visited.add(current.to);
+                dfsOrder.add(current.to);
+                pathWeight += current.weight;
+            }
+            for(var e : adjacencyList.get(current.to)) {
+                if(!visited.contains(e.to)) {
+                    stack.push(e);
+                }
+            }
+        }
+        return Path.builder().weight(pathWeight).path(dfsOrder).build();
     }
 
     private void buildAdjacencyList(String text) {

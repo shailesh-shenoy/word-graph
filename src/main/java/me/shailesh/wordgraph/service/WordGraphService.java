@@ -30,6 +30,8 @@ public class WordGraphService {
                         .id(wordGraph.getId())
                         .hash(wordGraph.getHash())
                         .text(wordGraph.getText())
+                        .wordCount(wordGraph.getWordCount())
+                        .edgeCount(wordGraph.getEdgeCount())
                         .createdAt(wordGraph.getCreatedAt())
                         .build()
                 ).toList();
@@ -52,6 +54,8 @@ public class WordGraphService {
                     .text(wordGraph.getText())
                     .adjacencyList(wordGraph.getAdjacencyList())
                     .wordFrequencies(wordGraph.getWordFrequencies())
+                    .wordCount(wordGraph.getWordCount())
+                    .edgeCount(wordGraph.getEdgeCount())
                     .createdAt(wordGraph.getCreatedAt())
                     .build();
         }
@@ -61,6 +65,8 @@ public class WordGraphService {
                 .text(trimmedText)
                 .adjacencyList(wga.getAdjacencyList())
                 .wordFrequencies(wga.getWordFrequencies())
+                .wordCount(wga.getV())
+                .edgeCount(wga.getE())
                 .createdAt(LocalDateTime.now())
                 .build();
         wordGraph = mongoTemplate.save(wordGraph);
@@ -70,6 +76,8 @@ public class WordGraphService {
                 .text(wordGraph.getText())
                 .adjacencyList(wordGraph.getAdjacencyList())
                 .wordFrequencies(wordGraph.getWordFrequencies())
+                .wordCount(wordGraph.getWordCount())
+                .edgeCount(wordGraph.getEdgeCount())
                 .createdAt(wordGraph.getCreatedAt())
                 .build();
     }
@@ -101,7 +109,34 @@ public class WordGraphService {
                 .text(wordGraph.getText())
                 .adjacencyList(wordGraph.getAdjacencyList())
                 .wordFrequencies(wordGraph.getWordFrequencies())
+                .wordCount(wordGraph.getWordCount())
+                .edgeCount(wordGraph.getEdgeCount())
                 .createdAt(wordGraph.getCreatedAt())
                 .build();
+    }
+
+    public WordGraphDetailDto traversal(WordGraphDetailDto wordGraphDetail, String start, String type) {
+        var wga = WordGraphAnalysis.builder()
+                .v(wordGraphDetail.getWordCount())
+                .e(wordGraphDetail.getEdgeCount())
+                .wordFrequencies(wordGraphDetail.getWordFrequencies())
+                .adjacencyList(wordGraphDetail.getAdjacencyList())
+                .build();
+        if(type == null) {
+            type = "";
+        }
+        switch(type.toLowerCase()) {
+            case "bfs":
+                wordGraphDetail.setBfs(wga.bfs(start));
+                break;
+            case "dfs":
+                wordGraphDetail.setDfs(wga.dfs(start));
+                break;
+            default:
+                wordGraphDetail.setBfs(wga.bfs(start));
+                wordGraphDetail.setDfs(wga.dfs(start));
+                break;
+        }
+        return wordGraphDetail;
     }
 }

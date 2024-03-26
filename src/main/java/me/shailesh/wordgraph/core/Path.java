@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Path {
-    private int length;
+    private double weight;
     private List<String> path;
 }

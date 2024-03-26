@@ -26,6 +26,7 @@ public class WordGraph {
     private String text;
     private Map<String, List<Edge>> adjacencyList;
     private Map<String, Integer> wordFrequencies;
+    private int wordCount;
     private int edgeCount;
     private LocalDateTime createdAt;
 }
