@@ -183,4 +183,11 @@ public class WordGraphAnalysis {
         }
         return wordPairs;
     }
+
+    public SpanningTree getMstUsingPrims() {
+        SpanningTree mst = new SpanningTree();
+        Set<String> visited = new HashSet<>();
+
+        return mst;
+    }
 }
