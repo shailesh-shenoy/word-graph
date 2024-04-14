@@ -187,6 +187,19 @@ public class WordGraphAnalysis {
     public SpanningTree getMstUsingPrims() {
         SpanningTree mst = new SpanningTree();
         Set<String> visited = new HashSet<>();
+        Map<String, Integer> weights = new HashMap<>();
+
+        String start = "";
+        for(var vertex : adjacencyList.keySet()) {
+            if(start.isEmpty()) {
+                start = vertex;
+                weights.put(start, 0);
+                continue;
+            }
+            weights.put(vertex, Integer.MAX_VALUE);
+        }
+
+
 
         return mst;
     }
