@@ -140,4 +140,28 @@ public class WordGraphService {
         return wordGraphDetail;
     }
 
+    public WordGraphDetailDto mst(WordGraphDetailDto wordGraphDetail, String type) {
+        var wga = WordGraphAnalysis.builder()
+                .v(wordGraphDetail.getWordCount())
+                .e(wordGraphDetail.getEdgeCount())
+                .wordFrequencies(wordGraphDetail.getWordFrequencies())
+                .adjacencyList(wordGraphDetail.getAdjacencyList())
+                .build();
+        if(type == null) {
+            type = "";
+        }
+        switch(type.toLowerCase()) {
+            case "prims":
+                wordGraphDetail.setPrimsMst(wga.primsMst());
+                break;
+            case "kruskals":
+                wordGraphDetail.setKruskalsMst(wga.kruskalsMst());
+                break;
+            default:
+                wordGraphDetail.setPrimsMst(wga.primsMst());
+                wordGraphDetail.setKruskalsMst(wga.kruskalsMst());
+                break;
+        }
+        return wordGraphDetail;
+    }
 }

@@ -47,4 +47,14 @@ public class WordGraphController {
         wordGraphDetail = wordGraphService.traversal(wordGraphDetail, start, type);
         return ResponseEntity.ok(wordGraphDetail);
     }
+
+    @GetMapping("/{id}/mst")
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphMst(@PathVariable String id, @RequestParam String type) {
+        var wordGraphDetail = wordGraphService.getWordGraphById(id);
+        if(wordGraphDetail == null) {
+            return ResponseEntity.notFound().build();
+        }
+        wordGraphDetail = wordGraphService.mst(wordGraphDetail, type);
+        return ResponseEntity.ok(wordGraphDetail);
+    }
 }

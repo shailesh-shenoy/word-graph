@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.shailesh.wordgraph.core.Edge;
 import me.shailesh.wordgraph.core.Path;
+import me.shailesh.wordgraph.core.SpanningTree;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,4 +30,6 @@ public class WordGraphDetailDto {
     private LocalDateTime createdAt;
     private Path bfs;
     private Path dfs;
+    private SpanningTree primsMst;
+    private SpanningTree kruskalsMst;
 }

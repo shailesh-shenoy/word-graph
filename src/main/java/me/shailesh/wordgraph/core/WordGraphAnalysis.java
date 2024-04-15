@@ -184,23 +184,58 @@ public class WordGraphAnalysis {
         return wordPairs;
     }
 
-    public SpanningTree getMstUsingPrims() {
+    public SpanningTree primsMst() {
         SpanningTree mst = new SpanningTree();
         Set<String> visited = new HashSet<>();
-        Map<String, Integer> weights = new HashMap<>();
 
         String start = "";
         for(var vertex : adjacencyList.keySet()) {
+            mst.addVertex(vertex);
             if(start.isEmpty()) {
                 start = vertex;
-                weights.put(start, 0);
+                mst.addEdge(start, "", 0.0);
                 continue;
             }
-            weights.put(vertex, Integer.MAX_VALUE);
+            mst.addEdge(vertex, "", Double.MAX_VALUE);
         }
 
+        for(int i = 0; i < v - 1; i++) {
+            String minVertex = getMinVertex(visited, mst);
+            for(var edge : adjacencyList.get(minVertex)) {
+                var vertex = edge.to;
+                var weight = edge.weight;
+                if(visited.contains(vertex)) {
+                    continue;
+                }
+                double weightInMst = mst.getVertexWeight(vertex);
+                if(weight >= weightInMst) {
+                    continue;
+                }
+                mst.updateEdge(vertex, minVertex, weight);
+            }
+        }
+        mst.computeWeight();
+        return mst;
+    }
 
+    private String getMinVertex(Set<String> visited, SpanningTree mst) {
+        double minWeight = Double.MAX_VALUE;
+        String minVertex = "";
+        for(var entry : mst.getAdjacencyList().entrySet()) {
+            var vertex = entry.getKey();
+            if(visited.contains(vertex))
+                continue;
+            var weight = entry.getValue().getFirst().weight;
+            if(weight < minWeight) {
+                minWeight = weight;
+                minVertex = vertex;
+            }
+        }
+        return minVertex;
+    }
 
+    public SpanningTree kruskalsMst() {
+        SpanningTree mst = new SpanningTree();
         return mst;
     }
 }
