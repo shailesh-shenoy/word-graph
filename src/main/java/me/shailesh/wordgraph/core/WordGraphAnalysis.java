@@ -22,13 +22,15 @@ public class WordGraphAnalysis {
 
     private static final int MAX_N = 10;
     private static final String WORD_REGEX = "[a-z0-9_-]+";
+    private int maxWords;
     private int v;
     private int e;
     private Map<String, Integer> wordFrequencies;
     private Map<String, List<Edge>> adjacencyList;
 
-    public WordGraphAnalysis(String text) {
+    public WordGraphAnalysis(String text, int maxWords) {
         e = 0;
+        this.maxWords = maxWords;
         analyzeFrequencies(text);
         v = adjacencyList.size();
         buildAdjacencyList(text);
@@ -43,6 +45,13 @@ public class WordGraphAnalysis {
      * @param text the text to create the graph from
      */
     private void analyzeFrequencies(String text) {
+        int wordsToInclude = maxWords;
+        if(wordsToInclude == 0) {
+            wordsToInclude = MAX_N;
+        }
+        if(wordsToInclude > MAX_N) {
+            wordsToInclude = MAX_N;
+        }
         adjacencyList = new HashMap<>();
         var allWordFrequencies = new HashMap<String, Integer>();
         wordFrequencies = new HashMap<>();
@@ -54,7 +63,7 @@ public class WordGraphAnalysis {
         // Filter out words that are not in the top MAX_N words
         List<String> words = new ArrayList<>(allWordFrequencies.keySet());
         words.sort((a, b) -> allWordFrequencies.get(b) - allWordFrequencies.get(a));
-        for (int i = 0; i < Math.min(MAX_N, words.size()); i++) {
+        for (int i = 0; i < Math.min(wordsToInclude, words.size()); i++) {
             wordFrequencies.put(words.get(i), allWordFrequencies.get(words.get(i)));
             adjacencyList.put(words.get(i), new ArrayList<>());
         }
@@ -201,6 +210,7 @@ public class WordGraphAnalysis {
 
         for(int i = 0; i < v - 1; i++) {
             String minVertex = getMinVertex(visited, mst);
+            visited.add(minVertex);
             for(var edge : adjacencyList.get(minVertex)) {
                 var vertex = edge.to;
                 var weight = edge.weight;

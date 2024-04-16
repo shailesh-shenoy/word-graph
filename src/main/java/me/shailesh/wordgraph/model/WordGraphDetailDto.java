@@ -23,6 +23,7 @@ public class WordGraphDetailDto {
     private String id;
     private String hash;
     private String text;
+    private int maxWords;
     private Map<String, List<Edge>> adjacencyList;
     private Map<String, Integer> wordFrequencies;
     private int wordCount;

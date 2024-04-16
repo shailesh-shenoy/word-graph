@@ -24,12 +24,13 @@ public class WordGraphService {
     public List<WordGraphDto> getAllWordGraphs() {
         // Query only the required fields
         Query query = new Query();
-        query.fields().include("id").include("hash").include("text").include("createdAt");
+        query.fields().include("id").include("hash").include("text").include("createdAt").include("maxWords").include("wordCount").include("edgeCount");
         return mongoTemplate.find(query, WordGraph.class).stream()
                 .map(wordGraph -> WordGraphDto.builder()
                         .id(wordGraph.getId())
                         .hash(wordGraph.getHash())
                         .text(wordGraph.getText())
+                        .maxWords(wordGraph.getMaxWords())
                         .wordCount(wordGraph.getWordCount())
                         .edgeCount(wordGraph.getEdgeCount())
                         .createdAt(wordGraph.getCreatedAt())
@@ -41,7 +42,7 @@ public class WordGraphService {
 
         String trimmedText = wordGraphCreate.getText().trim().toLowerCase();
         // Get hash of the text
-        String hash = getSHA256Hash(trimmedText);
+        String hash = getSHA256Hash(trimmedText  + wordGraphCreate.getMaxWords());
         // Check if the word graph already exists
         Query query = new Query();
         query.addCriteria(Criteria.where("hash").is(hash));
@@ -52,6 +53,7 @@ public class WordGraphService {
                     .id(wordGraph.getId())
                     .hash(wordGraph.getHash())
                     .text(wordGraph.getText())
+                    .maxWords(wordGraph.getMaxWords())
                     .adjacencyList(wordGraph.getAdjacencyList())
                     .wordFrequencies(wordGraph.getWordFrequencies())
                     .wordCount(wordGraph.getWordCount())
@@ -59,10 +61,11 @@ public class WordGraphService {
                     .createdAt(wordGraph.getCreatedAt())
                     .build();
         }
-        WordGraphAnalysis wga = new WordGraphAnalysis(trimmedText);
+        WordGraphAnalysis wga = new WordGraphAnalysis(trimmedText, wordGraphCreate.getMaxWords());
         wordGraph = WordGraph.builder()
                 .hash(hash)
                 .text(trimmedText)
+                .maxWords(wga.getMaxWords())
                 .adjacencyList(wga.getAdjacencyList())
                 .wordFrequencies(wga.getWordFrequencies())
                 .wordCount(wga.getV())
@@ -74,6 +77,7 @@ public class WordGraphService {
                 .id(wordGraph.getId())
                 .hash(wordGraph.getHash())
                 .text(wordGraph.getText())
+                .maxWords(wordGraph.getMaxWords())
                 .adjacencyList(wordGraph.getAdjacencyList())
                 .wordFrequencies(wordGraph.getWordFrequencies())
                 .wordCount(wordGraph.getWordCount())
@@ -107,6 +111,7 @@ public class WordGraphService {
                 .id(wordGraph.getId())
                 .hash(wordGraph.getHash())
                 .text(wordGraph.getText())
+                .maxWords(wordGraph.getMaxWords())
                 .adjacencyList(wordGraph.getAdjacencyList())
                 .wordFrequencies(wordGraph.getWordFrequencies())
                 .wordCount(wordGraph.getWordCount())

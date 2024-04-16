@@ -49,7 +49,7 @@ public class WordGraphController {
     }
 
     @GetMapping("/{id}/mst")
-    public ResponseEntity<WordGraphDetailDto> fetchWordGraphMst(@PathVariable String id, @RequestParam String type) {
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphMst(@PathVariable String id, @RequestParam(required = false) String type) {
         var wordGraphDetail = wordGraphService.getWordGraphById(id);
         if(wordGraphDetail == null) {
             return ResponseEntity.notFound().build();

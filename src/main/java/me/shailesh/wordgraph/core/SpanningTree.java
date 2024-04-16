@@ -6,16 +6,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
 public class SpanningTree {
     private double weight;
     private Map<String, List<Edge>> adjacencyList;
+
+    public SpanningTree() {
+        weight = 0.0;
+        adjacencyList = new HashMap<>();
+    }
 
     public void addVertex(String vertex) {
         adjacencyList.put(vertex, new ArrayList<>());

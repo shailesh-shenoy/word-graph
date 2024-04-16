@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class WordGraphCreateDto {
     private String text;
+    private int maxWords;
 }
