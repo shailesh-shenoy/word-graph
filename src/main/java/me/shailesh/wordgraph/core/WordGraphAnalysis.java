@@ -228,6 +228,29 @@ public class WordGraphAnalysis {
         return mst;
     }
 
+    public SpanningTree kruskalsMst() {
+        SpanningTree mst = new SpanningTree();
+        Set<String> visited = new HashSet<>();
+        PriorityQueue<DirectedEdge> pq = new PriorityQueue<>(Comparator.comparingDouble(e -> e.weight));
+        for(var vertex : adjacencyList.keySet()) {
+            mst.addVertex(vertex);
+            for(var edge : adjacencyList.get(vertex)) {
+                pq.add(new DirectedEdge(vertex, edge.to, edge.weight));
+            }
+        }
+        while(!pq.isEmpty()) {
+            var edge = pq.poll();
+            if(visited.contains(edge.to) && visited.contains(edge.from)) {
+                continue;
+            }
+            mst.addEdge(edge.from, edge.to, edge.weight);
+            visited.add(edge.from);
+            visited.add(edge.to);
+        }
+        mst.computeWeight();
+        return mst;
+    }
+
     private String getMinVertex(Set<String> visited, SpanningTree mst) {
         double minWeight = Double.MAX_VALUE;
         String minVertex = "";
@@ -242,10 +265,5 @@ public class WordGraphAnalysis {
             }
         }
         return minVertex;
-    }
-
-    public SpanningTree kruskalsMst() {
-        SpanningTree mst = new SpanningTree();
-        return mst;
     }
 }

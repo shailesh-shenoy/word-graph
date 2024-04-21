@@ -42,7 +42,12 @@ public class SpanningTree {
     public void computeWeight() {
         weight = 0.0;
         for(var edges : adjacencyList.values()) {
-            weight += edges.getFirst().weight;
+            if(edges == null || edges.isEmpty()) {
+                continue;
+            }
+            for(var edge : edges) {
+                weight += edge.weight;
+            }
         }
     }
 }
