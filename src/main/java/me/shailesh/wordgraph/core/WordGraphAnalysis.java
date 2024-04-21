@@ -251,6 +251,117 @@ public class WordGraphAnalysis {
         return mst;
     }
 
+    public SingleSourceShortestPath dijkstraShortestPath(String source) {
+
+        Set<String> visited = new HashSet<>();
+        PriorityQueue<Vertex> pq = new PriorityQueue<>();
+        for(String vertex : adjacencyList.keySet()) {
+            if(vertex.equals(source)) {
+                pq.add(new Vertex(vertex, 0.0, null));
+            } else {
+                pq.add(new Vertex(vertex, Double.MAX_VALUE, null));
+            }
+        }
+        Map<String, Path> shortestPaths = new HashMap<>();
+        while(!pq.isEmpty()) {
+            var current = pq.poll();
+            if(visited.contains(current.name)) {
+                continue;
+            }
+            visited.add(current.name);
+            for(var edge : adjacencyList.get(current.name)) {
+                var vertex = edge.to;
+                if(visited.contains(vertex)) {
+                    continue;
+                }
+                double distance = current.distance + edge.weight;
+                if(distance < pq.stream().filter(v -> v.name.equals(vertex)).findFirst().get().distance) {
+                    pq.removeIf(v -> v.name.equals(vertex));
+                    pq.add(new Vertex(vertex, distance, current));
+                }
+            }
+            if(!current.name.equals(source)) {
+                List<String> path = new LinkedList<>();
+                Vertex currentVertex = current;
+                while(currentVertex != null) {
+                    path.addFirst(currentVertex.name);
+                    currentVertex = currentVertex.predecessor;
+                }
+                shortestPaths.put(current.name, new Path(current.distance, path));
+            }
+        }
+        return new SingleSourceShortestPath(source, shortestPaths);
+    }
+
+    public List<SingleSourceShortestPath> floydWarshallShortestPaths() {
+        int V = adjacencyList.size();
+        double[][] dist = new double[V][V];
+        int[][] next = new int[V][V];
+        String[] vertices = adjacencyList.keySet().toArray(new String[0]);
+
+        // Step 1: Initialize the solution matrix same as input graph matrix
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                if (i == j) {
+                    dist[i][j] = 0;
+                    next[i][j] = i;
+                } else {
+                    dist[i][j] = Double.MAX_VALUE;
+                    next[i][j] = -1;
+                }
+            }
+        }
+
+        // Step 2: Update dist value for every edge
+        for (int i = 0; i < V; i++) {
+            for (Edge edge : adjacencyList.get(vertices[i])) {
+                int j = Arrays.asList(vertices).indexOf(edge.to);
+                dist[i][j] = edge.weight;
+                next[i][j] = j;
+            }
+        }
+
+        // Step 3: Update dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+        for (int k = 0; k < V; k++) {
+            for (int i = 0; i < V; i++) {
+                for (int j = 0; j < V; j++) {
+                    if (dist[i][k] != Double.MAX_VALUE && dist[k][j] != Double.MAX_VALUE && dist[i][k] + dist[k][j] < dist[i][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                        next[i][j] = next[i][k];
+                    }
+                }
+            }
+        }
+
+        // Step 4: Build the result
+        List<SingleSourceShortestPath> allShortestPaths = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            Map<String, Path> shortestPaths = new HashMap<>();
+            for (int j = 0; j < V; j++) {
+                if (i != j) {
+                    List<String> path = constructPath(i, j, next, vertices);
+                    shortestPaths.put(vertices[j], new Path(dist[i][j], path));
+                }
+            }
+            allShortestPaths.add(new SingleSourceShortestPath(vertices[i], shortestPaths));
+        }
+
+        return allShortestPaths;
+    }
+
+    private List<String> constructPath(int i, int j, int[][] next, String[] vertices) {
+        if (next[i][j] == -1) {
+            return null;
+        }
+        List<String> path = new ArrayList<>();
+        while (i != j) {
+            path.add(vertices[i]);
+            i = next[i][j];
+        }
+        path.add(vertices[j]);
+        return path;
+    }
+
     private String getMinVertex(Set<String> visited, SpanningTree mst) {
         double minWeight = Double.MAX_VALUE;
         String minVertex = "";

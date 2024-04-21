@@ -169,4 +169,38 @@ public class WordGraphService {
         }
         return wordGraphDetail;
     }
+
+    public WordGraphDetailDto shortestPath(WordGraphDetailDto wordGraphDetail, String start, String type) {
+        var wga = WordGraphAnalysis.builder()
+                .v(wordGraphDetail.getWordCount())
+                .e(wordGraphDetail.getEdgeCount())
+                .wordFrequencies(wordGraphDetail.getWordFrequencies())
+                .adjacencyList(wordGraphDetail.getAdjacencyList())
+                .build();
+        if(type == null) {
+            type = "";
+        }
+
+        switch(type.toLowerCase()) {
+            case "floyd-warshall":
+                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths());
+                break;
+            case "dijkstra":
+                if(start == null || start.isBlank()) {
+                    wordGraphDetail.setErrorMessage("Start vertex is required for Dijkstra's algorithm");
+                    break;
+                }
+                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start));
+                break;
+            default:
+                if(start == null || start.isBlank()) {
+                    wordGraphDetail.setErrorMessage("Start vertex is required for Dijkstra's algorithm");
+                    break;
+                }
+                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start));
+                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths());
+                break;
+        }
+        return wordGraphDetail;
+    }
 }

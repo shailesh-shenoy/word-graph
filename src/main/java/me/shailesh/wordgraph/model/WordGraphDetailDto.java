@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.shailesh.wordgraph.core.SingleSourceShortestPath;
 import me.shailesh.wordgraph.core.Edge;
 import me.shailesh.wordgraph.core.Path;
 import me.shailesh.wordgraph.core.SpanningTree;
@@ -33,4 +34,7 @@ public class WordGraphDetailDto {
     private Path dfs;
     private SpanningTree primsMst;
     private SpanningTree kruskalsMst;
+    private SingleSourceShortestPath dijkstraShortestPath;
+    private List<SingleSourceShortestPath> floydWarshallShortestPaths;
+    private String errorMessage;
 }
