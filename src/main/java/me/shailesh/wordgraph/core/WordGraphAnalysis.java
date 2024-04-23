@@ -69,6 +69,7 @@ public class WordGraphAnalysis {
         }
     }
 
+    // Time complexity: O(V + E)
     public Path bfs(String start) {
         if(!adjacencyList.containsKey(start)) {
             return null;
@@ -177,6 +178,7 @@ public class WordGraphAnalysis {
         }
     }
 
+    // O(N^2) time complexity
     private Set<Set<String>> getWordPairs() {
         Set<Set<String>> wordPairs = new HashSet<>();
         for(String word : adjacencyList.keySet()) {
