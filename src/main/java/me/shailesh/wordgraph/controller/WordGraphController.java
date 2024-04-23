@@ -49,12 +49,12 @@ public class WordGraphController {
     }
 
     @GetMapping("/{id}/mst")
-    public ResponseEntity<WordGraphDetailDto> fetchWordGraphMst(@PathVariable String id, @RequestParam(required = false) String type) {
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphMst(@PathVariable String id, @RequestParam(required = false) String type, @RequestParam(required = false) boolean maximum) {
         var wordGraphDetail = wordGraphService.getWordGraphById(id);
         if(wordGraphDetail == null) {
             return ResponseEntity.notFound().build();
         }
-        wordGraphDetail = wordGraphService.mst(wordGraphDetail, type);
+        wordGraphDetail = wordGraphService.mst(wordGraphDetail, type, maximum);
         return ResponseEntity.ok(wordGraphDetail);
     }
 

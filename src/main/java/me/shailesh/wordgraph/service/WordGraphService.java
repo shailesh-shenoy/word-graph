@@ -145,7 +145,7 @@ public class WordGraphService {
         return wordGraphDetail;
     }
 
-    public WordGraphDetailDto mst(WordGraphDetailDto wordGraphDetail, String type) {
+    public WordGraphDetailDto mst(WordGraphDetailDto wordGraphDetail, String type, boolean maximum) {
         var wga = WordGraphAnalysis.builder()
                 .v(wordGraphDetail.getWordCount())
                 .e(wordGraphDetail.getEdgeCount())
@@ -157,12 +157,25 @@ public class WordGraphService {
         }
         switch(type.toLowerCase()) {
             case "prims":
+                if(maximum) {
+                    wordGraphDetail.setPrimsMst(wga.primsMstMax());
+                    break;
+                }
                 wordGraphDetail.setPrimsMst(wga.primsMst());
                 break;
             case "kruskals":
+                if(maximum) {
+                    wordGraphDetail.setKruskalsMst(wga.kruskalsMstMax());
+                    break;
+                }
                 wordGraphDetail.setKruskalsMst(wga.kruskalsMst());
                 break;
             default:
+                if(maximum) {
+                    wordGraphDetail.setPrimsMst(wga.primsMstMax());
+                    wordGraphDetail.setKruskalsMst(wga.kruskalsMstMax());
+                    break;
+                }
                 wordGraphDetail.setPrimsMst(wga.primsMst());
                 wordGraphDetail.setKruskalsMst(wga.kruskalsMst());
                 break;

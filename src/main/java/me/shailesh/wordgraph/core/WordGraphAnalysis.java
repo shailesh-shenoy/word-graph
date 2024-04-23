@@ -390,4 +390,78 @@ public class WordGraphAnalysis {
         return path;
     }
 
+    public SpanningTree primsMstMax() {
+        SpanningTree mst = new SpanningTree();
+        Set<String> visited = new HashSet<>();
+
+        String start = "";
+        for(var vertex : adjacencyList.keySet()) {
+            mst.addVertex(vertex);
+            if(start.isEmpty()) {
+                start = vertex;
+                mst.addEdge(start, "", 0.0);
+                continue;
+            }
+            mst.addEdge(vertex, "", Double.MIN_VALUE);
+        }
+
+        for(int i = 0; i < v - 1; i++) {
+            String maxVertex = getMaxVertex(visited, mst);
+            visited.add(maxVertex);
+            for(var edge : adjacencyList.get(maxVertex)) {
+                var vertex = edge.to;
+                var weight = edge.weight;
+                if(visited.contains(vertex)) {
+                    continue;
+                }
+                double weightInMst = mst.getVertexWeight(vertex);
+                if(weight <= weightInMst) {
+                    continue;
+                }
+                mst.updateEdge(vertex, maxVertex, weight);
+            }
+        }
+        mst.computeWeight();
+        return mst;
+    }
+
+    private String getMaxVertex(Set<String> visited, SpanningTree mst) {
+        double maxWeight = Double.MIN_VALUE;
+        String maxVertex = "";
+        for(var entry : mst.getAdjacencyList().entrySet()) {
+            var vertex = entry.getKey();
+            if(visited.contains(vertex))
+                continue;
+            var weight = entry.getValue().getFirst().weight;
+            if(weight > maxWeight) {
+                maxWeight = weight;
+                maxVertex = vertex;
+            }
+        }
+        return maxVertex;
+    }
+
+    public SpanningTree kruskalsMstMax() {
+        SpanningTree mst = new SpanningTree();
+        Map<String, String> parent = new HashMap<>();
+        PriorityQueue<DirectedEdge> pq = new PriorityQueue<>(Comparator.comparingDouble(e -> -e.weight));
+        for (var vertex : adjacencyList.keySet()) {
+            mst.addVertex(vertex);
+            parent.put(vertex, vertex);
+            for (var edge : adjacencyList.get(vertex)) {
+                pq.add(new DirectedEdge(vertex, edge.to, edge.weight));
+            }
+        }
+        while (!pq.isEmpty()) {
+            var edge = pq.poll();
+            String root1 = find(edge.from, parent);
+            String root2 = find(edge.to, parent);
+            if (!root1.equals(root2)) {
+                union(root1, root2, parent);
+                mst.addEdge(edge.from, edge.to, edge.weight);
+            }
+        }
+        mst.computeWeight();
+        return mst;
+    }
 }
