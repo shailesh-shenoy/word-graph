@@ -20,7 +20,7 @@ public class WordGraphAnalysis {
     // and the edges are the number of times the words appear together in the text.
     // The graph is represented as an adjacency list.
 
-    private static final int MAX_N = 10;
+    private static final int MAX_N = 100;
     private static final String WORD_REGEX = "[a-z0-9_-]+";
     private int maxWords;
     private int v;
@@ -228,27 +228,55 @@ public class WordGraphAnalysis {
         return mst;
     }
 
+    private String getMinVertex(Set<String> visited, SpanningTree mst) {
+        double minWeight = Double.MAX_VALUE;
+        String minVertex = "";
+        for(var entry : mst.getAdjacencyList().entrySet()) {
+            var vertex = entry.getKey();
+            if(visited.contains(vertex))
+                continue;
+            var weight = entry.getValue().getFirst().weight;
+            if(weight < minWeight) {
+                minWeight = weight;
+                minVertex = vertex;
+            }
+        }
+        return minVertex;
+    }
+
     public SpanningTree kruskalsMst() {
         SpanningTree mst = new SpanningTree();
-        Set<String> visited = new HashSet<>();
+        Map<String, String> parent = new HashMap<>();
         PriorityQueue<DirectedEdge> pq = new PriorityQueue<>(Comparator.comparingDouble(e -> e.weight));
-        for(var vertex : adjacencyList.keySet()) {
+        for (var vertex : adjacencyList.keySet()) {
             mst.addVertex(vertex);
-            for(var edge : adjacencyList.get(vertex)) {
+            parent.put(vertex, vertex);
+            for (var edge : adjacencyList.get(vertex)) {
                 pq.add(new DirectedEdge(vertex, edge.to, edge.weight));
             }
         }
-        while(!pq.isEmpty()) {
+        while (!pq.isEmpty()) {
             var edge = pq.poll();
-            if(visited.contains(edge.to) && visited.contains(edge.from)) {
-                continue;
+            String root1 = find(edge.from, parent);
+            String root2 = find(edge.to, parent);
+            if (!root1.equals(root2)) {
+                union(root1, root2, parent);
+                mst.addEdge(edge.from, edge.to, edge.weight);
             }
-            mst.addEdge(edge.from, edge.to, edge.weight);
-            visited.add(edge.from);
-            visited.add(edge.to);
         }
         mst.computeWeight();
         return mst;
+    }
+
+    private String find(String vertex, Map<String, String> parent) {
+        if (!vertex.equals(parent.get(vertex))) {
+            parent.put(vertex, find(parent.get(vertex), parent));
+        }
+        return parent.get(vertex);
+    }
+
+    private void union(String root1, String root2, Map<String, String> parent) {
+        parent.put(root1, root2);
     }
 
     public SingleSourceShortestPath dijkstraShortestPath(String source) {
@@ -362,19 +390,4 @@ public class WordGraphAnalysis {
         return path;
     }
 
-    private String getMinVertex(Set<String> visited, SpanningTree mst) {
-        double minWeight = Double.MAX_VALUE;
-        String minVertex = "";
-        for(var entry : mst.getAdjacencyList().entrySet()) {
-            var vertex = entry.getKey();
-            if(visited.contains(vertex))
-                continue;
-            var weight = entry.getValue().getFirst().weight;
-            if(weight < minWeight) {
-                minWeight = weight;
-                minVertex = vertex;
-            }
-        }
-        return minVertex;
-    }
 }
