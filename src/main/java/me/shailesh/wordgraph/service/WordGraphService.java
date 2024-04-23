@@ -183,7 +183,7 @@ public class WordGraphService {
         return wordGraphDetail;
     }
 
-    public WordGraphDetailDto shortestPath(WordGraphDetailDto wordGraphDetail, String start, String type) {
+    public WordGraphDetailDto shortestPath(WordGraphDetailDto wordGraphDetail, String start, String type, boolean inverse) {
         var wga = WordGraphAnalysis.builder()
                 .v(wordGraphDetail.getWordCount())
                 .e(wordGraphDetail.getEdgeCount())
@@ -196,22 +196,22 @@ public class WordGraphService {
 
         switch(type.toLowerCase()) {
             case "floyd-warshall":
-                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths());
+                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths(inverse));
                 break;
             case "dijkstra":
                 if(start == null || start.isBlank()) {
                     wordGraphDetail.setErrorMessage("Start vertex is required for Dijkstra's algorithm");
                     break;
                 }
-                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start));
+                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start, inverse));
                 break;
             default:
                 if(start == null || start.isBlank()) {
                     wordGraphDetail.setErrorMessage("Start vertex is required for Dijkstra's algorithm");
                     break;
                 }
-                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start));
-                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths());
+                wordGraphDetail.setDijkstraShortestPath(wga.dijkstraShortestPath(start, inverse));
+                wordGraphDetail.setFloydWarshallShortestPaths(wga.floydWarshallShortestPaths(inverse));
                 break;
         }
         return wordGraphDetail;

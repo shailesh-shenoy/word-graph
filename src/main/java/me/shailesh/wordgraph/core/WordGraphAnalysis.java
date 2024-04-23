@@ -279,11 +279,16 @@ public class WordGraphAnalysis {
         parent.put(root1, root2);
     }
 
-    public SingleSourceShortestPath dijkstraShortestPath(String source) {
-
+    public SingleSourceShortestPath dijkstraShortestPath(String source, boolean inverse) {
+        Map<String, List<Edge>> adjList;
+        if(inverse) {
+            adjList = getInverseAdjacencyList();
+        } else {
+            adjList = adjacencyList;
+        }
         Set<String> visited = new HashSet<>();
         PriorityQueue<Vertex> pq = new PriorityQueue<>();
-        for(String vertex : adjacencyList.keySet()) {
+        for(String vertex : adjList.keySet()) {
             if(vertex.equals(source)) {
                 pq.add(new Vertex(vertex, 0.0, null));
             } else {
@@ -297,7 +302,7 @@ public class WordGraphAnalysis {
                 continue;
             }
             visited.add(current.name);
-            for(var edge : adjacencyList.get(current.name)) {
+            for(var edge : adjList.get(current.name)) {
                 var vertex = edge.to;
                 if(visited.contains(vertex)) {
                     continue;
@@ -321,11 +326,33 @@ public class WordGraphAnalysis {
         return new SingleSourceShortestPath(source, shortestPaths);
     }
 
-    public List<SingleSourceShortestPath> floydWarshallShortestPaths() {
-        int V = adjacencyList.size();
+    private Map<String, List<Edge>> getInverseAdjacencyList() {
+        Map<String, List<Edge>> inverseAdjacencyList = new HashMap<>();
+        // Return an adjacency list with the the edge weights inversed, i.e. 1/weight
+        for (var entry : adjacencyList.entrySet()) {
+            String vertex = entry.getKey();
+            List<Edge> edges = entry.getValue();
+            for (Edge edge : edges) {
+                if (!inverseAdjacencyList.containsKey(edge.to)) {
+                    inverseAdjacencyList.put(edge.to, new ArrayList<>());
+                }
+                inverseAdjacencyList.get(edge.to).add(new Edge(vertex, 1.0 / edge.weight));
+            }
+        }
+        return inverseAdjacencyList;
+    }
+
+    public List<SingleSourceShortestPath> floydWarshallShortestPaths(boolean inverse) {
+        Map<String, List<Edge>> adjList;
+        if(inverse) {
+            adjList = getInverseAdjacencyList();
+        } else {
+            adjList = adjacencyList;
+        }
+        int V = adjList.size();
         double[][] dist = new double[V][V];
         int[][] next = new int[V][V];
-        String[] vertices = adjacencyList.keySet().toArray(new String[0]);
+        String[] vertices = adjList.keySet().toArray(new String[0]);
 
         // Step 1: Initialize the solution matrix same as input graph matrix
         for (int i = 0; i < V; i++) {
@@ -342,7 +369,7 @@ public class WordGraphAnalysis {
 
         // Step 2: Update dist value for every edge
         for (int i = 0; i < V; i++) {
-            for (Edge edge : adjacencyList.get(vertices[i])) {
+            for (Edge edge : adjList.get(vertices[i])) {
                 int j = Arrays.asList(vertices).indexOf(edge.to);
                 dist[i][j] = edge.weight;
                 next[i][j] = j;

@@ -59,12 +59,12 @@ public class WordGraphController {
     }
 
     @GetMapping("/{id}/shortest-path")
-    public ResponseEntity<WordGraphDetailDto> fetchWordGraphShortestPath(@PathVariable String id, @RequestParam(required = false) String start, @RequestParam(required = false) String type) {
+    public ResponseEntity<WordGraphDetailDto> fetchWordGraphShortestPath(@PathVariable String id, @RequestParam(required = false) String start, @RequestParam(required = false) String type, @RequestParam(required = false) boolean inverse) {
         var wordGraphDetail = wordGraphService.getWordGraphById(id);
         if(wordGraphDetail == null) {
             return ResponseEntity.notFound().build();
         }
-        wordGraphDetail = wordGraphService.shortestPath(wordGraphDetail, start, type);
+        wordGraphDetail = wordGraphService.shortestPath(wordGraphDetail, start, type, inverse);
         if(wordGraphDetail.getErrorMessage() != null) {
             return ResponseEntity.badRequest().body(wordGraphDetail);
         }
