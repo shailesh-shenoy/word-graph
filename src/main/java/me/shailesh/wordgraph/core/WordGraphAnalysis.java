@@ -402,7 +402,7 @@ public class WordGraphAnalysis {
                 mst.addEdge(start, "", 0.0);
                 continue;
             }
-            mst.addEdge(vertex, "", Double.MIN_VALUE);
+            mst.addEdge(vertex, "", Double.NEGATIVE_INFINITY);
         }
 
         for(int i = 0; i < v - 1; i++) {
@@ -426,7 +426,7 @@ public class WordGraphAnalysis {
     }
 
     private String getMaxVertex(Set<String> visited, SpanningTree mst) {
-        double maxWeight = Double.MIN_VALUE;
+        double maxWeight = Double.NEGATIVE_INFINITY;
         String maxVertex = "";
         for(var entry : mst.getAdjacencyList().entrySet()) {
             var vertex = entry.getKey();
