@@ -28,6 +28,7 @@ public class WordGraphAnalysis {
     private Map<String, Integer> wordFrequencies;
     private Map<String, List<Edge>> adjacencyList;
 
+    // O(NlogN + V^2) time complexity
     public WordGraphAnalysis(String text, int maxWords) {
         e = 0;
         this.maxWords = maxWords;
@@ -44,6 +45,8 @@ public class WordGraphAnalysis {
      *
      * @param text the text to create the graph from
      */
+
+    // Time complexity: O(NlogN)
     private void analyzeFrequencies(String text) {
         int wordsToInclude = maxWords;
         if(wordsToInclude == 0) {
@@ -95,6 +98,7 @@ public class WordGraphAnalysis {
         return Path.builder().weight(pathWeight).path(bfsOrder).build();
     }
 
+    // Time complexity: O(V + E)
     public Path dfs(String start) {
         if(!adjacencyList.containsKey(start)) {
             return null;
@@ -121,6 +125,7 @@ public class WordGraphAnalysis {
         return Path.builder().weight(pathWeight).path(dfsOrder).build();
     }
 
+    // Time Complexity: O(V^2)
     private void buildAdjacencyList(String text) {
         int count = 0;
         // Split the text into sentences
@@ -195,6 +200,8 @@ public class WordGraphAnalysis {
         return wordPairs;
     }
 
+    // Time complexity: O(V^2)
+    // Can be optimized to O(VlogV + E) using a priority queue
     public SpanningTree primsMst() {
         SpanningTree mst = new SpanningTree();
         Set<String> visited = new HashSet<>();
@@ -246,6 +253,7 @@ public class WordGraphAnalysis {
         return minVertex;
     }
 
+    // Time complexity: O(ElogE)
     public SpanningTree kruskalsMst() {
         SpanningTree mst = new SpanningTree();
         Map<String, String> parent = new HashMap<>();
@@ -281,6 +289,7 @@ public class WordGraphAnalysis {
         parent.put(root1, root2);
     }
 
+    // Time complexity: O((V + E)logV)
     public SingleSourceShortestPath dijkstraShortestPath(String source, boolean inverse) {
         Map<String, List<Edge>> adjList;
         if(inverse) {
@@ -344,6 +353,7 @@ public class WordGraphAnalysis {
         return inverseAdjacencyList;
     }
 
+    // Time complexity: O(V^3)
     public List<SingleSourceShortestPath> floydWarshallShortestPaths(boolean inverse) {
         Map<String, List<Edge>> adjList;
         if(inverse) {
@@ -419,6 +429,8 @@ public class WordGraphAnalysis {
         return path;
     }
 
+    // Time complexity: O(V^2)
+    // Can be optimized to O(VlogV + E) using a priority queue
     public SpanningTree primsMstMax() {
         SpanningTree mst = new SpanningTree();
         Set<String> visited = new HashSet<>();
@@ -470,6 +482,7 @@ public class WordGraphAnalysis {
         return maxVertex;
     }
 
+    // Time complexity: O(ElogE)
     public SpanningTree kruskalsMstMax() {
         SpanningTree mst = new SpanningTree();
         Map<String, String> parent = new HashMap<>();
